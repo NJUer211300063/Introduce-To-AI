@@ -103,21 +103,33 @@ public class Agent extends AbstractPlayer {
     }
 
     private int eval(StateObservation stateObs) {
+//        ArrayList<Observation>[] fixedPositions = stateObs.getImmovablePositions();
+//        ArrayList<Observation>[] movingPositions = stateObs.getMovablePositions();
+//        Vector2d goalpos = fixedPositions[1].get(0).position; // 目标的坐标
+//        Vector2d playerpos = new Vector2d(stateObs.getAvatarPosition());// 玩家位置
+//        //int distance1 = (int)(Math.abs(playerpos.x - goalpos.x) + Math.abs(playerpos.y - goalpos.y)); // 玩家到目标的距离
+//        //int distance2 = (int)(Math.abs(goalpos.x - keypos.x) + Math.abs(goalpos.y - keypos.y)); // 玩家到钥匙的距离
+//        // 如果找到钥匙,distance定义为玩家到目标的距离
+//        double distance1 = playerpos.dist(goalpos);
+//        double distance2 = playerpos.dist(keypos);
+//        if (is_getkey) {
+//            System.out.println("get key!");
+//            return max_score - (int)distance1;
+//        }
+//        else  {
+//            return max_score - (int)distance1 - (int)distance2;
+//        }
         ArrayList<Observation>[] fixedPositions = stateObs.getImmovablePositions();
         ArrayList<Observation>[] movingPositions = stateObs.getMovablePositions();
-        Vector2d goalpos = fixedPositions[1].get(0).position; // 目标的坐标
-        Vector2d playerpos = new Vector2d(stateObs.getAvatarPosition());// 玩家位置
-        //int distance1 = (int)(Math.abs(playerpos.x - goalpos.x) + Math.abs(playerpos.y - goalpos.y)); // 玩家到目标的距离
-        //int distance2 = (int)(Math.abs(goalpos.x - keypos.x) + Math.abs(goalpos.y - keypos.y)); // 玩家到钥匙的距离
-        // 如果找到钥匙,distance定义为玩家到目标的距离
-        double distance1 = playerpos.dist(goalpos);
-        double distance2 = playerpos.dist(keypos);
-        if (is_getkey) {
-            System.out.println("get key!");
-            return max_score - (int)distance1;
-        }
-        else  {
-            return max_score - (int)distance1 - (int)distance2;
+        Vector2d goal_pos = fixedPositions[1].get(0).position; // 目标的坐标
+        Vector2d player_pos = new Vector2d(stateObs.getAvatarPosition());// 玩家位置
+
+        // 分为没拿到钥匙和拿到钥匙的情况
+        if (stateObs.getAvatarType() == 1) {
+            Vector2d key_pos = movingPositions[0].get(0).position; //钥匙的坐标
+            return (int)(max_score -  player_pos.dist(key_pos) - goal_pos.dist(key_pos));
+        } else {
+            return (int)(max_score -  player_pos.dist(goal_pos));
         }
     }
 
